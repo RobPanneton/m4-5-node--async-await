@@ -1,26 +1,34 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const express = require("express");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
 
-const { handleJoke } = require('./handlers');
+const { handleJoke } = require("./handlers");
 
 express()
   .use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Origin", "*");
     res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept'
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
     );
     next();
   })
-  .use(morgan('dev'))
-  .use(express.static('public'))
+  .use(morgan("dev"))
+  .use(express.static("public"))
   .use(bodyParser.json())
   .use(express.urlencoded({ extended: false }))
-  .set('view engine', 'ejs')
+  .set("view engine", "ejs")
 
+  .get("/joke/:type", handleJoke)
   // endpoints
+
+  .get("*", (req, res) => {
+    res.status(404).json({
+      status: 404,
+      message: "link not found",
+    });
+  })
 
   .listen(8000, () => console.log(`Listening on port 8000`));
